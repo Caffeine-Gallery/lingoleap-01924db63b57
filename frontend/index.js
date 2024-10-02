@@ -17,6 +17,8 @@ async function translateText() {
         return;
     }
 
+    translationOutput.textContent = 'Translating...';
+
     const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${lang}`;
 
     try {
@@ -25,6 +27,7 @@ async function translateText() {
         currentTranslation = data.responseData.translatedText;
         translationOutput.textContent = currentTranslation;
         await backend.setLastTranslation(currentTranslation);
+        updateLastTranslation();
     } catch (error) {
         console.error('Translation error:', error);
         translationOutput.textContent = 'Translation error occurred.';
@@ -41,17 +44,30 @@ function speakTranslation() {
     }
 }
 
-async function displayLastTranslation() {
+async function updateLastTranslation() {
     try {
         const lastTranslation = await backend.getLastTranslation();
         lastTranslationDiv.textContent = `Last translation: ${lastTranslation}`;
+        lastTranslationDiv.style.display = lastTranslation ? 'block' : 'none';
     } catch (error) {
         console.error('Error fetching last translation:', error);
     }
 }
 
-inputText.addEventListener('input', translateText);
+inputText.addEventListener('input', debounce(translateText, 300));
 targetLanguage.addEventListener('change', translateText);
 speakButton.addEventListener('click', speakTranslation);
 
-displayLastTranslation();
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+updateLastTranslation();
