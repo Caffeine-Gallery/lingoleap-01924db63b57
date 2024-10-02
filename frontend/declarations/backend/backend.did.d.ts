@@ -3,7 +3,7 @@ import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
 export interface _SERVICE {
-  'getLastTranslation' : ActorMethod<[], string>,
+  'getLastTranslation' : ActorMethod<[], [] | [string]>,
   'setLastTranslation' : ActorMethod<[string], undefined>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;

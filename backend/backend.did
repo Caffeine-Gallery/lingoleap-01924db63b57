@@ -1,4 +1,4 @@
 service : {
-  getLastTranslation: () -> (text) query;
+  getLastTranslation: () -> (opt text) query;
   setLastTranslation: (text) -> ();
 }
